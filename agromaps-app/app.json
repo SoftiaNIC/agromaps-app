@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "Myappagmp",
-    "slug": "Myappagmp",
+    "name": "agromaps-app",
+    "slug": "agromaps-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "myappagmp",
+    "scheme": "agromaps-app",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
