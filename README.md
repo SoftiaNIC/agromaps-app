@@ -1,4 +1,4 @@
-<h1 align="center">Hi Everyone!,  We're Agromaps.</h1><img src="https://media.giphy.com/media/hvRJCLFzcasrR4ia7z/giphy.gif" width="28">
+<h1 align="center">Hi Everyone!,  We're Agromaps. <img src="https://media.giphy.com/media/hvRJCLFzcasrR4ia7z/giphy.gif" width="28"> </h1>
 
 
 <img width="3817" height="2153" alt="Coverlkhjh" src="https://github.com/user-attachments/assets/cf1a5cd6-5ca8-4325-9dd9-2761b3fd7800" />
