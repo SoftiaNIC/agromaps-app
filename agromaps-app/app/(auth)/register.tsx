@@ -1,94 +1,208 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
-import { router } from 'expo-router';
+import { FontAwesome, Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
+import { useState } from "react";
+import {
+  Image,
+  ImageBackground,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+
+const backgroundImage = require("../../assets/images/background1.png");
+const logo = require("../../assets/images/logo.png");
 
 export default function RegisterScreen() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-
-  const handleRegister = () => {
-    // Aquí iría lógica de registro (e.g., API call)
-    if (email && password && confirmPassword) {
-      if (password === confirmPassword) {
-        // Simulación: redirigir a dashboard si registro exitoso
-        router.replace('/(dashboard)/overview');
-      } else {
-        Alert.alert('Error', 'Las contraseñas no coinciden');
-      }
-    } else {
-      Alert.alert('Error', 'Por favor completa todos los campos');
-    }
-  };
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Crear Cuenta</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-        autoCapitalize="none"
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Contraseña"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Confirmar Contraseña"
-        value={confirmPassword}
-        onChangeText={setConfirmPassword}
-        secureTextEntry
-      />
-      <TouchableOpacity style={styles.button} onPress={handleRegister}>
-        <Text style={styles.buttonText}>Registrarse</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => router.push('/(auth)/login')}>
-        <Text style={styles.link}>¿Ya tienes cuenta? Inicia sesión</Text>
-      </TouchableOpacity>
-    </View>
+    <ImageBackground source={backgroundImage} style={styles.background}>
+      <View style={styles.container}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => router.push("/(auth)/login")}
+        >
+          <Ionicons name="arrow-back" size={22} color="#fff" />
+        </TouchableOpacity>
+
+        <Text style={styles.title}>Crear Cuenta</Text>
+
+        <Image source={logo} style={styles.logo} resizeMode="contain" />
+
+        <Text style={styles.welcome}>Bienvenidos</Text>
+        <Text style={styles.subtitle}>
+          Crea una nueva cuenta en nuestra App para mejorar tus suelos,
+          siembras y muchos más...
+        </Text>
+
+        <View style={styles.inputContainer}>
+          <Ionicons name="mail-outline" size={20} color="#777" />
+          <TextInput
+            style={styles.input}
+            placeholder="Correo Electrónico"
+            placeholderTextColor="#777"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            autoCapitalize="none"
+          />
+        </View>
+
+        <View style={styles.inputContainer}>
+          <Ionicons name="lock-closed-outline" size={20} color="#777" />
+          <TextInput
+            style={styles.input}
+            placeholder="Contraseña"
+            placeholderTextColor="#777"
+            secureTextEntry
+            value={password}
+            onChangeText={setPassword}
+          />
+        </View>
+
+        <View style={styles.inputContainer}>
+          <Ionicons name="lock-closed-outline" size={20} color="#777" />
+          <TextInput
+            style={styles.input}
+            placeholder="Confirmar Contraseña"
+            placeholderTextColor="#777"
+            secureTextEntry
+            value={confirm}
+            onChangeText={setConfirm}
+          />
+        </View>
+
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => router.push("/(auth)/login")}
+        >
+          <Text style={styles.buttonText}>Crear Cuenta</Text>
+        </TouchableOpacity>
+
+        <Text style={styles.footerText}>
+          ¿Ya tienes una Cuenta?{" "}
+          <Text
+            style={styles.linkText}
+            onPress={() => router.push("/(auth)/login")}
+          >
+            Iniciar Sesión
+          </Text>
+        </Text>
+
+        <View style={styles.dividerContainer}>
+          <View style={styles.divider} />
+          <Text style={styles.dividerText}>O Crea una cuenta con</Text>
+          <View style={styles.divider} />
+        </View>
+
+        <View style={styles.socialContainer}>
+          <FontAwesome name="facebook" size={28} color="#1877F2" />
+          <FontAwesome name="google" size={28} color="#DB4437" />
+          <FontAwesome name="apple" size={28} color="#000" />
+        </View>
+      </View>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+    justifyContent: "center",
+  },
   container: {
     flex: 1,
-    justifyContent: 'center',
-    padding: 20,
-    backgroundColor: '#fff',
+    alignItems: "center",
+    paddingHorizontal: 25,
+    paddingTop: 80,
+  },
+  backButton: {
+    position: "absolute",
+    top: 60,
+    left: 25,
   },
   title: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "600",
+    marginBottom: 10,
+  },
+  logo: {
+    width: 90,
+    height: 90,
+    marginVertical: 15,
+  },
+  welcome: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
+    color: "#fff",
+  },
+  subtitle: {
+    color: "#eee",
+    textAlign: "center",
     marginBottom: 20,
-    textAlign: 'center',
+    paddingHorizontal: 10,
+  },
+  inputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#fff",
+    borderRadius: 25,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    width: "100%",
+    marginBottom: 12,
   },
   input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    padding: 10,
-    marginBottom: 15,
-    borderRadius: 5,
+    flex: 1,
+    marginLeft: 10,
+    color: "#000",
   },
   button: {
-    backgroundColor: '#28a745',
-    padding: 15,
-    borderRadius: 5,
-    alignItems: 'center',
+    backgroundColor: "#003F2D",
+    width: "100%",
+    paddingVertical: 15,
+    borderRadius: 25,
+    marginTop: 10,
+    alignItems: "center",
   },
   buttonText: {
-    color: '#fff',
+    color: "#fff",
+    fontWeight: "bold",
     fontSize: 16,
   },
-  link: {
+  footerText: {
+    color: "#fff",
     marginTop: 15,
-    color: '#007bff',
-    textAlign: 'center',
+  },
+  linkText: {
+    color: "#fff",
+    fontWeight: "bold",
+  },
+  dividerContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 25,
+    width: "100%",
+  },
+  divider: {
+    flex: 1,
+    height: 1,
+    backgroundColor: "#ccc",
+  },
+  dividerText: {
+    marginHorizontal: 10,
+    color: "#fff",
+    fontSize: 12,
+  },
+  socialContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    width: "60%",
+    marginTop: 15,
   },
 });
