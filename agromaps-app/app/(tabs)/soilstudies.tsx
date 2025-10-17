@@ -1,12 +1,11 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, SafeAreaView } from 'react-native';
 import { router } from 'expo-router';
-import DashboardLayout from '../../components/DashboardLayout';
 
 export default function SoilstudiesTabScreen() {
   return (
-    <DashboardLayout activeTab="library">
-      <ScrollView style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <ScrollView style={styles.scrollContainer}>
         <View style={styles.content}>
           <Text style={styles.title}>📚 Biblioteca de Cultivos</Text>
           <Text style={styles.subtitle}>
@@ -40,7 +39,7 @@ export default function SoilstudiesTabScreen() {
           </TouchableOpacity>
         </View>
       </ScrollView>
-    </DashboardLayout>
+    </SafeAreaView>
   );
 }
 
@@ -48,6 +47,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f8f9fa',
+  },
+  scrollContainer: {
+    flex: 1,
   },
   content: {
     padding: 20,

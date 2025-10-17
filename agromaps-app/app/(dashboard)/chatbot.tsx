@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
-import DashboardLayout from '../../components/DashboardLayout';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, SafeAreaView } from 'react-native';
 
 export default function ChatbotScreen() {
   const [messages, setMessages] = useState([
@@ -22,8 +21,8 @@ export default function ChatbotScreen() {
   };
 
   return (
-    <DashboardLayout activeTab="chatbot">
-      <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.content}>
         <Text style={styles.title}>🤖 Chatbot IA</Text>
         <ScrollView style={styles.chat}>
           {messages.map((msg) => (
@@ -45,7 +44,7 @@ export default function ChatbotScreen() {
           </TouchableOpacity>
         </View>
       </View>
-    </DashboardLayout>
+    </SafeAreaView>
   );
 }
 
@@ -53,6 +52,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f8f9fa',
+  },
+  content: {
+    flex: 1,
+    padding: 20,
   },
   title: {
     fontSize: 24,

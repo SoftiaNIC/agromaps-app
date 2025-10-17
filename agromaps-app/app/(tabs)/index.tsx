@@ -1,8 +1,7 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, SafeAreaView } from 'react-native';
 import { router } from 'expo-router';
 import { useAuth } from '../../hooks/useAuth';
-import DashboardLayout from '../../components/DashboardLayout';
 
 export default function HomeScreen() {
   const { isAuthenticated, user, isLoading } = useAuth();
@@ -10,9 +9,11 @@ export default function HomeScreen() {
   // Si está cargando, mostrar loading
   if (isLoading) {
     return (
-      <View style={styles.loadingContainer}>
-        <Text style={styles.loadingText}>Cargando...</Text>
-      </View>
+      <SafeAreaView style={styles.container}>
+        <View style={styles.loadingContainer}>
+          <Text style={styles.loadingText}>Cargando...</Text>
+        </View>
+      </SafeAreaView>
     );
   }
 
@@ -23,96 +24,98 @@ export default function HomeScreen() {
   // Si está autenticado, mostrar contenido personalizado
   if (isAuthenticated && user) {
     return (
-      <DashboardLayout activeTab="maps">
-        <ScrollView style={styles.container}>
+      <SafeAreaView style={styles.container}>
+        <ScrollView style={styles.scrollContainer}>
           <View style={styles.contentContainer}>
-          <Text style={styles.welcomeTitle}>
-            ¡Bienvenido, {user.first_name}! 👋
-          </Text>
-          <Text style={styles.subtitle}>
-            Gestiona mapas agrícolas, analiza datos de suelos y chatea con IA para optimizar tus cultivos.
-          </Text>
-          
-          <View style={styles.profileInfo}>
-            <Text style={styles.profileTitle}>📋 Información del Perfil</Text>
-            <View style={styles.profileItem}>
-              <Text style={styles.profileLabel}>Usuario:</Text>
-              <Text style={styles.profileValue}>{user.username}</Text>
-            </View>
-            <View style={styles.profileItem}>
-              <Text style={styles.profileLabel}>Email:</Text>
-              <Text style={styles.profileValue}>{user.email}</Text>
-            </View>
-            <View style={styles.profileItem}>
-              <Text style={styles.profileLabel}>Rol:</Text>
-              <Text style={styles.profileValue}>{user.role}</Text>
-            </View>
-            <View style={styles.profileItem}>
-              <Text style={styles.profileLabel}>Estado:</Text>
-              <Text style={[styles.profileValue, { color: user.is_active ? '#28a745' : '#dc3545' }]}>
-                {user.is_active ? 'Activo' : 'Inactivo'}
-              </Text>
-            </View>
-            {user.phone_number && (
+            <Text style={styles.welcomeTitle}>
+              ¡Bienvenido, {user.first_name}! 👋
+            </Text>
+            <Text style={styles.subtitle}>
+              Gestiona mapas agrícolas, analiza datos de suelos y chatea con IA para optimizar tus cultivos.
+            </Text>
+            
+            <View style={styles.profileInfo}>
+              <Text style={styles.profileTitle}>📋 Información del Perfil</Text>
               <View style={styles.profileItem}>
-                <Text style={styles.profileLabel}>Teléfono:</Text>
-                <Text style={styles.profileValue}>{user.phone_number}</Text>
+                <Text style={styles.profileLabel}>Usuario:</Text>
+                <Text style={styles.profileValue}>{user.username}</Text>
               </View>
-            )}
+              <View style={styles.profileItem}>
+                <Text style={styles.profileLabel}>Email:</Text>
+                <Text style={styles.profileValue}>{user.email}</Text>
+              </View>
+              <View style={styles.profileItem}>
+                <Text style={styles.profileLabel}>Rol:</Text>
+                <Text style={styles.profileValue}>{user.role}</Text>
+              </View>
+              <View style={styles.profileItem}>
+                <Text style={styles.profileLabel}>Estado:</Text>
+                <Text style={[styles.profileValue, { color: user.is_active ? '#28a745' : '#dc3545' }]}>
+                  {user.is_active ? 'Activo' : 'Inactivo'}
+                </Text>
+              </View>
+              {user.phone_number && (
+                <View style={styles.profileItem}>
+                  <Text style={styles.profileLabel}>Teléfono:</Text>
+                  <Text style={styles.profileValue}>{user.phone_number}</Text>
+                </View>
+              )}
+            </View>
+            
+            <View style={styles.featuresContainer}>
+              <TouchableOpacity 
+                style={styles.featureButton} 
+                onPress={() => router.push('/(dashboard)/overview')}
+              >
+                <Text style={styles.featureButtonText}>📊 Dashboard</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                style={styles.featureButton} 
+                onPress={() => router.push('/(tabs)/map')}
+              >
+                <Text style={styles.featureButtonText}>🗺️ Mapas</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                style={styles.featureButton} 
+                onPress={() => router.push('/(dashboard)/chatbot')}
+              >
+                <Text style={styles.featureButtonText}>🤖 Chatbot IA</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                style={styles.featureButton} 
+                onPress={() => router.push('/(tabs)/soilstudies')}
+              >
+                <Text style={styles.featureButtonText}>🌱 Estudios de Suelo</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-          
-          <View style={styles.featuresContainer}>
-            <TouchableOpacity 
-              style={styles.featureButton} 
-              onPress={() => router.push('/(dashboard)/overview')}
-            >
-              <Text style={styles.featureButtonText}>📊 Dashboard</Text>
-            </TouchableOpacity>
-            
-            <TouchableOpacity 
-              style={styles.featureButton} 
-              onPress={() => router.push('/(tabs)/map')}
-            >
-              <Text style={styles.featureButtonText}>🗺️ Mapas</Text>
-            </TouchableOpacity>
-            
-            <TouchableOpacity 
-              style={styles.featureButton} 
-              onPress={() => router.push('/(dashboard)/chatbot')}
-            >
-              <Text style={styles.featureButtonText}>🤖 Chatbot IA</Text>
-            </TouchableOpacity>
-            
-            <TouchableOpacity 
-              style={styles.featureButton} 
-              onPress={() => router.push('/(tabs)/soilstudies')}
-            >
-              <Text style={styles.featureButtonText}>🌱 Estudios de Suelo</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
         </ScrollView>
-      </DashboardLayout>
+      </SafeAreaView>
     );
   }
 
   // Si no está autenticado, mostrar pantalla de login
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Bienvenido a AgroMaps</Text>
-      <Text style={styles.subtitle}>
-        Gestiona mapas agrícolas, analiza datos de suelos y chatea con IA para optimizar tus cultivos.
-      </Text>
-      <TouchableOpacity style={styles.button} onPress={() => router.push('/(auth)/login')}>
-        <Text style={styles.buttonText}>Iniciar Sesión</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.secondaryButton} onPress={() => router.push('/(auth)/register')}>
-        <Text style={styles.secondaryButtonText}>Registrarse</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.tertiaryButton} onPress={() => router.push('/(dashboard)/overview')}>
-        <Text style={styles.tertiaryButtonText}>Ir al Dashboard (Prueba)</Text>
-      </TouchableOpacity>
-    </View>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.contentContainer}>
+        <Text style={styles.title}>Bienvenido a AgroMaps</Text>
+        <Text style={styles.subtitle}>
+          Gestiona mapas agrícolas, analiza datos de suelos y chatea con IA para optimizar tus cultivos.
+        </Text>
+        <TouchableOpacity style={styles.button} onPress={() => router.push('/(auth)/login')}>
+          <Text style={styles.buttonText}>Iniciar Sesión</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.secondaryButton} onPress={() => router.push('/(auth)/register')}>
+          <Text style={styles.secondaryButtonText}>Registrarse</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.tertiaryButton} onPress={() => router.push('/(dashboard)/overview')}>
+          <Text style={styles.tertiaryButtonText}>Ir al Dashboard (Prueba)</Text>
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
   );
 }
 
@@ -120,6 +123,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f8f9fa',
+  },
+  scrollContainer: {
+    flex: 1,
   },
   loadingContainer: {
     flex: 1,
