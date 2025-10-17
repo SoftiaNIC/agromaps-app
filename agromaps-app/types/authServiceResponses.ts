@@ -6,19 +6,28 @@ export interface LoginResponse {
     id: number;
     username: string;
     email: string;
-    first_name: string;
-    last_name: string;
+    first_name?: string;
+    last_name?: string;
     is_staff: boolean;
-    is_active: boolean;
+    is_active?: boolean;
   };
 }
 
 export interface RegisterResponse {
-  id: number;
-  username: string;
-  email: string;
-  first_name: string;
-  last_name: string;
+  user: {
+    id: number;
+    username: string;
+    email: string;
+    first_name: string;
+    last_name: string;
+    phone_number: string | null;
+    role: string;
+    is_verified: boolean;
+    created_at: string;
+    is_active: boolean;
+  };
+  access: string;
+  refresh: string;
 }
 
 export interface RefreshTokenResponse {
@@ -31,7 +40,10 @@ export interface ProfileResponse {
   email: string;
   first_name: string;
   last_name: string;
-  is_staff: boolean;
+  phone_number: string | null;
+  role: string;
+  is_verified: boolean;
+  created_at: string;
   is_active: boolean;
 }
 

@@ -6,7 +6,7 @@
 
 export const API_CONSTANTS = {
   // Base URL - Se lee de la variable de entorno (ej. desde .env)
-  BASE_URL: process.env.EXPO_PUBLIC_API_BASE_URL || 'http://localhost:8000/api',
+  BASE_URL: process.env.EXPO_PUBLIC_API_BASE_URL || 'http://api.agromapsnic.com/api',
 
   // Endpoints de Autenticación
   AUTH: {

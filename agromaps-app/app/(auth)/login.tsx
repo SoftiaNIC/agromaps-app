@@ -9,7 +9,12 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
 } from "react-native";
+import { useLogin } from "../../hooks/useLogin";
 
 // 🪴 Asegúrate de colocar tus imágenes en assets/
 const backgroundImage = require("../../assets/images/background1.png");
@@ -18,10 +23,34 @@ const logo = require("../../assets/images/logo.png");
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  
+  // Hook para manejar el login
+  const { login, isLoading, error, clearError } = useLogin();
+
+  // Función para manejar el login
+  const handleLogin = async () => {
+    if (!email.trim() || !password.trim()) {
+      return;
+    }
+    
+    await login({
+      username_or_email: email.trim(),
+      password: password,
+    });
+  };
 
   return (
     <ImageBackground source={backgroundImage} style={styles.background}>
-      <View style={styles.container}>
+      <KeyboardAvoidingView 
+        style={styles.container} 
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+      >
+        <ScrollView 
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => router.back()}
@@ -43,12 +72,16 @@ export default function LoginScreen() {
           <Ionicons name="mail-outline" size={20} color="#777" />
           <TextInput
             style={styles.input}
-            placeholder="Correo Electrónico"
+            placeholder="Correo Electrónico o Usuario"
             placeholderTextColor="#777"
             value={email}
-            onChangeText={setEmail}
+            onChangeText={(text) => {
+              setEmail(text);
+              if (error) clearError();
+            }}
             keyboardType="email-address"
             autoCapitalize="none"
+            editable={!isLoading}
           />
         </View>
 
@@ -61,16 +94,32 @@ export default function LoginScreen() {
             placeholderTextColor="#777"
             secureTextEntry
             value={password}
-            onChangeText={setPassword}
+            onChangeText={(text) => {
+              setPassword(text);
+              if (error) clearError();
+            }}
+            editable={!isLoading}
           />
         </View>
 
         <TouchableOpacity
-          style={styles.button}
-          onPress={() => router.replace("/(dashboard)/overview")}
+          style={[styles.button, isLoading && styles.buttonDisabled]}
+          onPress={handleLogin}
+          disabled={isLoading}
         >
-          <Text style={styles.buttonText}>Iniciar Sesión</Text>
+          {isLoading ? (
+            <ActivityIndicator color="#fff" size="small" />
+          ) : (
+            <Text style={styles.buttonText}>Iniciar Sesión</Text>
+          )}
         </TouchableOpacity>
+
+        {/* Mostrar error si existe */}
+        {error && (
+          <View style={styles.errorContainer}>
+            <Text style={styles.errorText}>{error}</Text>
+          </View>
+        )}
 
         <Text style={styles.footerText}>
           ¿No tienes una Cuenta?{" "}
@@ -93,7 +142,8 @@ export default function LoginScreen() {
           <FontAwesome name="google" size={28} color="#DB4437" />
           <FontAwesome name="apple" size={28} color="#000" />
         </View>
-      </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </ImageBackground>
   );
 }
@@ -105,9 +155,13 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
+  },
+  scrollContent: {
     alignItems: "center",
     paddingHorizontal: 25,
     paddingTop: 80,
+    paddingBottom: 40,
+    minHeight: '100%',
   },
   backButton: {
     position: "absolute",
@@ -160,10 +214,28 @@ const styles = StyleSheet.create({
     marginTop: 10,
     alignItems: "center",
   },
+  buttonDisabled: {
+    backgroundColor: "#666",
+    opacity: 0.7,
+  },
   buttonText: {
     color: "#fff",
     fontWeight: "bold",
     fontSize: 16,
+  },
+  errorContainer: {
+    backgroundColor: "rgba(255, 0, 0, 0.1)",
+    borderWidth: 1,
+    borderColor: "#ff4444",
+    borderRadius: 8,
+    padding: 10,
+    marginTop: 10,
+    width: "100%",
+  },
+  errorText: {
+    color: "#ff4444",
+    textAlign: "center",
+    fontSize: 14,
   },
   footerText: {
     color: "#fff",

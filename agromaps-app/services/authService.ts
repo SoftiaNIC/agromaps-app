@@ -1,5 +1,6 @@
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import { API_CONSTANTS } from '../constants/apiConstants';
+import { getAccessToken, getRefreshToken, setAccessToken, clearAuthData } from '../utils/storageHelpers';
 import { LoginRequest, RegisterRequest, RefreshTokenRequest, UpdateProfileRequest, ChangePasswordRequest, UpdateUserRequest, ChangeUserRoleRequest } from '../types/authServiceRequests';
 import { LoginResponse, RegisterResponse, RefreshTokenResponse, ProfileResponse, UserListResponse, UserResponse, UserStatsResponse } from '../types/authServiceResponses';
 
@@ -13,8 +14,8 @@ const apiClient: AxiosInstance = axios.create({
 
 // Interceptor para agregar el token de acceso a las solicitudes autenticadas
 apiClient.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('access_token'); // O usa AsyncStorage en React Native
+  async (config) => {
+    const token = await getAccessToken();
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -29,9 +30,37 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
-    if (error.response?.status === 401) {
-      // Aquí puedes implementar lógica para refrescar el token si es necesario
+    const originalRequest = error.config;
+
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+
+      try {
+        // Intentar refrescar el token
+        const refreshToken = await getRefreshToken();
+        if (refreshToken) {
+          const response = await apiClient.post<RefreshTokenResponse>(
+            API_CONSTANTS.AUTH.REFRESH_TOKEN,
+            { refresh: refreshToken }
+          );
+
+          const { access } = response.data;
+          await setAccessToken(access);
+
+          // Reintentar la petición original con el nuevo token
+          originalRequest.headers.Authorization = `Bearer ${access}`;
+          return apiClient(originalRequest);
+        }
+      } catch (refreshError) {
+        // Si falla el refresh, limpiar datos de autenticación
+        console.error('Error al refrescar token:', refreshError);
+        await clearAuthData();
+        
+        // En React Native, podrías querer navegar al login aquí
+        // router.replace('/(auth)/login');
+      }
     }
+
     return Promise.reject(error);
   }
 );
@@ -61,8 +90,18 @@ class AuthService {
   /**
    * Cerrar sesión
    */
-  async logout(): Promise<AxiosResponse> {
-    return apiClient.post(API_CONSTANTS.AUTH.LOGOUT);
+  async logout(): Promise<AxiosResponse | void> {
+    try {
+      // Intentar hacer logout en el servidor
+      const response = await apiClient.post(API_CONSTANTS.AUTH.LOGOUT);
+      return response;
+    } catch (error) {
+      // Aunque falle el logout en el servidor, limpiar datos locales
+      console.error('Error en logout del servidor:', error);
+    } finally {
+      // Siempre limpiar datos locales
+      await clearAuthData();
+    }
   }
 
   /**
@@ -133,6 +172,38 @@ class AuthService {
    */
   async getUserStats(): Promise<AxiosResponse<UserStatsResponse>> {
     return apiClient.get<UserStatsResponse>(API_CONSTANTS.STATS.USER_STATS);
+  }
+
+  /**
+   * Verificar si el usuario está autenticado
+   */
+  async isAuthenticated(): Promise<boolean> {
+    try {
+      const token = await getAccessToken();
+      if (!token) return false;
+
+      // Verificar que el token sea válido haciendo una petición al perfil
+      await this.getProfile();
+      return true;
+    } catch (error) {
+      console.error('Error verificando autenticación:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Obtener token de acceso actual
+   */
+  async getCurrentToken(): Promise<string | null> {
+    return await getAccessToken();
+  }
+
+  /**
+   * Verificar si hay un token de acceso válido (sin hacer petición al servidor)
+   */
+  async hasValidToken(): Promise<boolean> {
+    const token = await getAccessToken();
+    return token !== null && token !== '';
   }
 }
 

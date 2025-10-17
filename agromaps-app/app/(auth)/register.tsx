@@ -9,19 +9,55 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
 } from "react-native";
+import { useRegister } from "../../hooks/useRegister";
 
 const backgroundImage = require("../../assets/images/background1.png");
 const logo = require("../../assets/images/logo.png");
 
 export default function RegisterScreen() {
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  
+  // Hook para manejar el registro
+  const { register, isLoading, error, clearError } = useRegister();
+
+  // Función para manejar el registro
+  const handleRegister = async () => {
+    if (!username.trim() || !email.trim() || !password.trim() || !confirm.trim() || !firstName.trim() || !lastName.trim()) {
+      return;
+    }
+    
+    await register({
+      username: username.trim(),
+      email: email.trim(),
+      password: password,
+      password_confirm: confirm,
+      first_name: firstName.trim(),
+      last_name: lastName.trim(),
+    });
+  };
 
   return (
     <ImageBackground source={backgroundImage} style={styles.background}>
-      <View style={styles.container}>
+      <KeyboardAvoidingView 
+        style={styles.container} 
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+      >
+        <ScrollView 
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => router.push("/(auth)/login")}
@@ -40,15 +76,65 @@ export default function RegisterScreen() {
         </Text>
 
         <View style={styles.inputContainer}>
+          <Ionicons name="person-outline" size={20} color="#777" />
+          <TextInput
+            style={styles.input}
+            placeholder="Nombre de Usuario"
+            placeholderTextColor="#777"
+            value={username}
+            onChangeText={(text) => {
+              setUsername(text);
+              if (error) clearError();
+            }}
+            autoCapitalize="none"
+            editable={!isLoading}
+          />
+        </View>
+
+        <View style={styles.inputContainer}>
           <Ionicons name="mail-outline" size={20} color="#777" />
           <TextInput
             style={styles.input}
             placeholder="Correo Electrónico"
             placeholderTextColor="#777"
             value={email}
-            onChangeText={setEmail}
+            onChangeText={(text) => {
+              setEmail(text);
+              if (error) clearError();
+            }}
             keyboardType="email-address"
             autoCapitalize="none"
+            editable={!isLoading}
+          />
+        </View>
+
+        <View style={styles.inputContainer}>
+          <Ionicons name="person-outline" size={20} color="#777" />
+          <TextInput
+            style={styles.input}
+            placeholder="Nombre"
+            placeholderTextColor="#777"
+            value={firstName}
+            onChangeText={(text) => {
+              setFirstName(text);
+              if (error) clearError();
+            }}
+            editable={!isLoading}
+          />
+        </View>
+
+        <View style={styles.inputContainer}>
+          <Ionicons name="person-outline" size={20} color="#777" />
+          <TextInput
+            style={styles.input}
+            placeholder="Apellido"
+            placeholderTextColor="#777"
+            value={lastName}
+            onChangeText={(text) => {
+              setLastName(text);
+              if (error) clearError();
+            }}
+            editable={!isLoading}
           />
         </View>
 
@@ -60,7 +146,11 @@ export default function RegisterScreen() {
             placeholderTextColor="#777"
             secureTextEntry
             value={password}
-            onChangeText={setPassword}
+            onChangeText={(text) => {
+              setPassword(text);
+              if (error) clearError();
+            }}
+            editable={!isLoading}
           />
         </View>
 
@@ -72,16 +162,32 @@ export default function RegisterScreen() {
             placeholderTextColor="#777"
             secureTextEntry
             value={confirm}
-            onChangeText={setConfirm}
+            onChangeText={(text) => {
+              setConfirm(text);
+              if (error) clearError();
+            }}
+            editable={!isLoading}
           />
         </View>
 
         <TouchableOpacity
-          style={styles.button}
-          onPress={() => router.push("/(auth)/login")}
+          style={[styles.button, isLoading && styles.buttonDisabled]}
+          onPress={handleRegister}
+          disabled={isLoading}
         >
-          <Text style={styles.buttonText}>Crear Cuenta</Text>
+          {isLoading ? (
+            <ActivityIndicator color="#fff" size="small" />
+          ) : (
+            <Text style={styles.buttonText}>Crear Cuenta</Text>
+          )}
         </TouchableOpacity>
+
+        {/* Mostrar error si existe */}
+        {error && (
+          <View style={styles.errorContainer}>
+            <Text style={styles.errorText}>{error}</Text>
+          </View>
+        )}
 
         <Text style={styles.footerText}>
           ¿Ya tienes una Cuenta?{" "}
@@ -104,7 +210,8 @@ export default function RegisterScreen() {
           <FontAwesome name="google" size={28} color="#DB4437" />
           <FontAwesome name="apple" size={28} color="#000" />
         </View>
-      </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </ImageBackground>
   );
 }
@@ -116,9 +223,13 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
+  },
+  scrollContent: {
     alignItems: "center",
     paddingHorizontal: 25,
     paddingTop: 80,
+    paddingBottom: 40,
+    minHeight: '100%',
   },
   backButton: {
     position: "absolute",
@@ -170,10 +281,28 @@ const styles = StyleSheet.create({
     marginTop: 10,
     alignItems: "center",
   },
+  buttonDisabled: {
+    backgroundColor: "#666",
+    opacity: 0.7,
+  },
   buttonText: {
     color: "#fff",
     fontWeight: "bold",
     fontSize: 16,
+  },
+  errorContainer: {
+    backgroundColor: "rgba(255, 0, 0, 0.1)",
+    borderWidth: 1,
+    borderColor: "#ff4444",
+    borderRadius: 8,
+    padding: 10,
+    marginTop: 10,
+    width: "100%",
+  },
+  errorText: {
+    color: "#ff4444",
+    textAlign: "center",
+    fontSize: 14,
   },
   footerText: {
     color: "#fff",
