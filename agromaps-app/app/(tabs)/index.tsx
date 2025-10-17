@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { router } from 'expo-router';
 import { useAuth } from '../../hooks/useAuth';
-import UserHeader from '../../components/UserHeader';
+import DashboardLayout from '../../components/DashboardLayout';
 
 export default function HomeScreen() {
   const { isAuthenticated, user, isLoading } = useAuth();
@@ -23,24 +23,9 @@ export default function HomeScreen() {
   // Si está autenticado, mostrar contenido personalizado
   if (isAuthenticated && user) {
     return (
-      <ScrollView style={styles.container}>
-        <View style={styles.headerContainer}>
-          <View style={styles.userInfo}>
-            <Text style={styles.headerText}>👤 {user.first_name} {user.last_name}</Text>
-            <Text style={styles.headerEmail}>{user.email}</Text>
-          </View>
-          <TouchableOpacity 
-            style={styles.logoutButton}
-            onPress={() => {
-              // Simple logout sin confirmación por ahora
-              console.log('Logout clicked');
-            }}
-          >
-            <Text style={styles.logoutText}>Salir</Text>
-          </TouchableOpacity>
-        </View>
-        
-        <View style={styles.contentContainer}>
+      <DashboardLayout activeTab="maps">
+        <ScrollView style={styles.container}>
+          <View style={styles.contentContainer}>
           <Text style={styles.welcomeTitle}>
             ¡Bienvenido, {user.first_name}! 👋
           </Text>
@@ -106,7 +91,8 @@ export default function HomeScreen() {
             </TouchableOpacity>
           </View>
         </View>
-      </ScrollView>
+        </ScrollView>
+      </DashboardLayout>
     );
   }
 
@@ -144,40 +130,6 @@ const styles = StyleSheet.create({
   loadingText: {
     fontSize: 18,
     color: '#666',
-  },
-  headerContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    paddingHorizontal: 20,
-    paddingVertical: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e9ecef',
-  },
-  userInfo: {
-    flex: 1,
-  },
-  headerText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#333',
-  },
-  headerEmail: {
-    fontSize: 14,
-    color: '#666',
-    marginTop: 2,
-  },
-  logoutButton: {
-    backgroundColor: '#dc3545',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 6,
-  },
-  logoutText: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: '500',
   },
   profileInfo: {
     backgroundColor: '#fff',
