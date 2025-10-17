@@ -80,7 +80,7 @@ export const useRegister = (): UseRegisterReturn => {
             text: 'OK',
             onPress: () => {
               // Navegar directamente al dashboard
-              router.replace('/(dashboard)/overview');
+              router.replace('/(tabs)/dashboard');
             }
           }
         ]

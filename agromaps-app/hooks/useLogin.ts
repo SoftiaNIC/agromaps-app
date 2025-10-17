@@ -66,7 +66,7 @@ export const useLogin = (): UseLoginReturn => {
             text: 'OK',
             onPress: () => {
               // Navegar al dashboard
-              router.replace('/(dashboard)/overview');
+              router.replace('/(tabs)/dashboard');
             }
           }
         ]

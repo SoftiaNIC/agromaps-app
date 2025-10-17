@@ -63,13 +63,7 @@ export default function HomeScreen() {
             </View>
             
             <View style={styles.featuresContainer}>
-              <TouchableOpacity 
-                style={styles.featureButton} 
-                onPress={() => router.push('/(dashboard)/overview')}
-              >
-                <Text style={styles.featureButtonText}>📊 Dashboard</Text>
-              </TouchableOpacity>
-              
+                            
               <TouchableOpacity 
                 style={styles.featureButton} 
                 onPress={() => router.push('/(tabs)/map')}
@@ -110,9 +104,6 @@ export default function HomeScreen() {
         </TouchableOpacity>
         <TouchableOpacity style={styles.secondaryButton} onPress={() => router.push('/(auth)/register')}>
           <Text style={styles.secondaryButtonText}>Registrarse</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.tertiaryButton} onPress={() => router.push('/(dashboard)/overview')}>
-          <Text style={styles.tertiaryButtonText}>Ir al Dashboard (Prueba)</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
