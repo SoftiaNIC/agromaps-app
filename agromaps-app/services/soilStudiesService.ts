@@ -99,6 +99,8 @@ export interface SoilStudyResponse {
   created_at: string;
   updated_at: string;
   is_active: boolean;
+  location_lat: number; // Agregar según API
+  location_lng: number; // Agregar según API
 }
 
 class SoilStudiesService {

@@ -73,7 +73,7 @@ export default function HomeScreen() {
               
               <TouchableOpacity 
                 style={styles.featureButton} 
-                onPress={() => router.push('/(dashboard)/chatbot')}
+                onPress={() => router.push('/(tabs)/chatbot')}
               >
                 <Text style={styles.featureButtonText}>🤖 Chatbot IA</Text>
               </TouchableOpacity>
